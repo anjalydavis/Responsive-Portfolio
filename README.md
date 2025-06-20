@@ -1,8 +1,10 @@
 RESPONSIVE PORTFOLIO WEBSITE
+
+
 Portfolio Website build inspired by the retro game theme. 
 
 🔗 Live Demo
-👉 delicate-brioche-054c69.netlify.app
+👉 look at about section for website link.
 
 🚀 Features
 Feature 1 :Interactive audio player
@@ -12,17 +14,6 @@ Feature 2 :Responsive design for all devices
 Frontend: HTML, CSS, JavaScript
 Frameworks/Libraries: React
 Deployment: Netlify
-
-📁 Project Structure
-bash
-├── dist/               # Production build (deployed to Netlify)
-├── src/                # Development files
-│   ├── assets/         # Images, audio, fonts
-│   ├── js/             # JavaScript files
-│   └── styles/         # CSS files
-├── index.html          # Main HTML file
-└── README.md           # You're here! :)
-
 
 
 🔧 Debugging Issues
