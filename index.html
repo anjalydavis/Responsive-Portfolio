@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anjaly -Developer Portfolio</title>
+    <title>Anjaly - Developer Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* ===== GAME THEME VARIABLES ===== */
@@ -448,9 +448,46 @@
     position: absolute;
     top: 10px;
     left: 10px;
+    transition: all 0.1s;
   }
+  
+  .gold-mole {
+    width: 60px;
+    height: 60px;
+    background: gold;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    box-shadow: 0 0 10px gold;
+}
+.bomb {
+    width: 60px;
+    height: 60px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: 3px solid red;
+}
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
 
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+  
+  
 
 
 
@@ -747,84 +784,202 @@
     <!-- ===== SCRIPTS ===== -->
     <script>
 
-        // Game logic for Whack-a-Mole
-          let score = 0;
-  const scoreDisplay = document.getElementById('score');
-  const timerDisplay = document.getElementById('timer');
- const startBtn = document.getElementById('startBtn');
-  const restartBtn = document.getElementById('restartBtn');
-  const holes = Array.from(document.querySelectorAll('.hole'));
+// Whack A Mole Game Logic 
+// Whack-a-Mole Game Logic
 
+  let score = 0;
   let timeLeft = 30;
+  let difficultyLevel = 1;
+  const maxDifficulty = 5;
+  let streak = 0;
+  let multiplier = 1;
   let gameInterval, countdown;
   let gameActive = false;
 
+  const scoreDisplay = document.getElementById('score');
+  const timerDisplay = document.getElementById('timer');
+  const startBtn = document.getElementById('startBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const holes = Array.from(document.querySelectorAll('.hole'));
+
+  // Sounds
   const bonkSound = new Audio('/assests/audio/bonk.mp3');
   bonkSound.volume = 0.4;
+  const goldSound = new Audio('/assests/audio/coin.mp3');
+  const bombSound = new Audio('/assests/audio/explosion.mp3');
+  const clickSound = new Audio('/assests/audio/click2.mp3');
+  clickSound.volume = 0.5; // Optional: adjust volume
+
+  const moleTypes = [
+    { class: 'mole', points: 1, speed: 800, sound: bonkSound },
+    { class: 'gold-mole', points: 5, speed: 500, sound: goldSound },
+    { class: 'bomb', points: -3, speed: 600, sound: bombSound }
+  ];
 
   function spawnMole() {
     if (!gameActive) return;
+
     holes.forEach(h => h.innerHTML = '');
-    const randomHole = holes[Math.floor(Math.random() * holes.length)];
-    const mole = document.createElement('div');
-    mole.classList.add('mole');
-    randomHole.appendChild(mole);
 
-    mole.addEventListener('click', () => {
-       if (!gameActive) return;
-      score++;
-      scoreDisplay.textContent = score;
-      mole.remove();
-      bonkSound.currentTime = 0;
-      bonkSound.play();
-    });
+    const molesToSpawn = Math.min(difficultyLevel, holes.length);
+    const availableHoles = [...holes];
 
-    setTimeout(() => {
-      mole.remove();
-    }, 800);
+    for (let i = 0; i < molesToSpawn; i++) {
+      if (availableHoles.length === 0) break;
+
+      const randomIndex = Math.floor(Math.random() * availableHoles.length);
+      const hole = availableHoles.splice(randomIndex, 1)[0];
+      const moleType = moleTypes[Math.floor(Math.random() * moleTypes.length)];
+
+      const mole = document.createElement('div');
+      mole.classList.add(moleType.class);
+      hole.appendChild(mole);
+
+      let molePosition = 10;
+      const moleMovement = setInterval(() => {
+        molePosition = (molePosition + 5) % 20;
+        mole.style.top = `${molePosition}px`;
+      }, 100);
+
+      mole.addEventListener('click', () => {
+        if (!gameActive) return;
+        clearInterval(moleMovement);
+
+        // Score logic
+        streak++;
+        if (streak % 5 === 0) {
+          multiplier = Math.min(5, multiplier + 0.5);
+          showMultiplierEffect();
+        }
+
+        score += moleType.points * multiplier;
+        scoreDisplay.textContent = Math.floor(score);
+
+        if (score >= difficultyLevel * 15 && difficultyLevel < maxDifficulty) {
+          increaseDifficulty();
+        }
+
+        // ✅ Play sound here
+        moleType.sound.currentTime = 0;
+        moleType.sound.play();
+
+        mole.remove();
+      });
+
+      setTimeout(() => {
+        clearInterval(moleMovement);
+        if (mole.parentElement) {
+          mole.remove();
+          if (gameActive) {
+            timeLeft = Math.max(0, timeLeft - 1);
+            timerDisplay.textContent = `⏱ ${timeLeft}s`;
+            streak = 0;
+            multiplier = 1;
+          }
+        }
+      }, moleType.speed - (difficultyLevel * 50));
+    }
+  }
+
+  function showMultiplierEffect() {
+    const effect = document.createElement('div');
+    effect.textContent = `x${multiplier.toFixed(1)}!`;
+    effect.style.position = 'absolute';
+    effect.style.color = 'gold';
+    effect.style.fontFamily = 'var(--heading-font)';
+    effect.style.animation = 'floatUp 1s forwards';
+    document.querySelector('.game-board').appendChild(effect);
+    setTimeout(() => effect.remove(), 1000);
+  }
+
+  function increaseDifficulty() {
+    difficultyLevel++;
+    updateDifficultyDisplay();
+    clearInterval(gameInterval);
+    gameInterval = setInterval(spawnMole, 1000 - (difficultyLevel * 150));
+
+    const levelUp = document.createElement('div');
+    levelUp.textContent = `LEVEL ${difficultyLevel}!`;
+    levelUp.style.position = 'absolute';
+    levelUp.style.color = 'var(--accent)';
+    levelUp.style.fontFamily = 'var(--heading-font)';
+    levelUp.style.animation = 'pulse 1s';
+    document.querySelector('.game-board').appendChild(levelUp);
+    setTimeout(() => levelUp.remove(), 1500);
+  }
+
+  function updateDifficultyDisplay() {
+    let display = document.getElementById('difficulty-display');
+    if (!display) {
+      display = document.createElement('div');
+      display.id = 'difficulty-display';
+      display.style.position = 'absolute';
+      display.style.top = '10px';
+      display.style.right = '10px';
+      display.style.color = 'var(--accent)';
+      display.style.fontFamily = 'var(--heading-font)';
+      document.querySelector('.game-board').appendChild(display);
+    }
+    display.textContent = `Level ${difficultyLevel}`;
   }
 
   function startGame() {
-  if (gameActive) return; // Prevent multiple starts
-  
-  gameActive = true;
-  score = 0;
-  scoreDisplay.textContent = score;
-  timeLeft = 30;
-  timerDisplay.textContent = `⏱ ${timeLeft}s`;
-  restartBtn.style.display = 'none';
-  startBtn.style.display = 'none'; // Hide start button during game
+    if (gameActive) return;
 
-  gameInterval = setInterval(spawnMole, 1000);
-  countdown = setInterval(() => {
-    timeLeft--;
+    gameActive = true;
+    score = 0;
+    timeLeft = 30;
+    difficultyLevel = 1;
+    streak = 0;
+    multiplier = 1;
+
+    scoreDisplay.textContent = score;
     timerDisplay.textContent = `⏱ ${timeLeft}s`;
-    if (timeLeft <= 0) endGame();
-  }, 1000);
-}
+    restartBtn.style.display = 'none';
+    startBtn.style.display = 'none';
 
+    updateDifficultyDisplay();
 
+    gameInterval = setInterval(spawnMole, 1000);
+    countdown = setInterval(() => {
+      timeLeft--;
+      timerDisplay.textContent = `⏱ ${timeLeft}s`;
+      if (timeLeft <= 0) endGame();
+    }, 1000);
+  }
 
   function endGame() {
+    gameActive = false;
     clearInterval(gameInterval);
     clearInterval(countdown);
     holes.forEach(h => h.innerHTML = '');
-    timerDisplay.textContent = '⏱ 0s';
-    alert(`Game Over! 🎉 Your score: ${score}`);
+
+    const gameOver = document.createElement('div');
+    gameOver.textContent = `GAME OVER! Score: ${Math.floor(score)}`;
+    gameOver.style.position = 'absolute';
+    gameOver.style.color = 'var(--accent)';
+    gameOver.style.fontFamily = 'var(--heading-font)';
+    gameOver.style.animation = 'blink 1s infinite';
+    document.querySelector('.game-board').appendChild(gameOver);
+    setTimeout(() => gameOver.remove(), 3000);
+
     const highScore = localStorage.getItem('highScore') || 0;
     if (score > highScore) {
       localStorage.setItem('highScore', score);
-      alert('New High Score! 🏆');
+      const highScoreMsg = document.createElement('div');
+      highScoreMsg.textContent = 'NEW HIGH SCORE! 🏆';
+      highScoreMsg.style.position = 'absolute';
+      highScoreMsg.style.color = 'gold';
+      highScoreMsg.style.fontFamily = 'var(--heading-font)';
+      document.querySelector('.game-board').appendChild(highScoreMsg);
+      setTimeout(() => highScoreMsg.remove(), 3000);
     }
+
     restartBtn.style.display = 'inline-block';
-     startBtn.style.display = 'none'; 
   }
 
   startBtn.addEventListener('click', startGame);
   restartBtn.addEventListener('click', startGame);
-
-  
-
 
 
 
@@ -906,20 +1061,6 @@ document.querySelectorAll('nav a[href="#about"]').forEach(link => {
   document.getElementById('currentYear').textContent = new Date().getFullYear();
 
   // Add sound effect to buttons
-  const clickSound = new Audio('/assests/audio/click2.mp3');
-  clickSound.volume = 0.5; // Optional: adjust volume
-
-  // Unlock audio on first user interaction
-  let audioUnlocked = false;
-  function unlockAudio() {
-    if (!audioUnlocked) {
-      clickSound.play().catch(() => {}); // Try to unlock
-      audioUnlocked = true;
-    }
-  }
-  document.addEventListener('click', unlockAudio, { once: true });
-
-  // Play click sound on interactive elements
   const clickableElements = document.querySelectorAll(
     '.pixel-btn,.contact-item, nav ul li a'
   );
@@ -942,4 +1083,4 @@ document.querySelectorAll('nav a[href="#about"]').forEach(link => {
   });
 </script>
 </body>
-</html>    
+</html>
