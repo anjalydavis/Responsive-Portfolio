@@ -22,12 +22,8 @@ bash
 │   └── styles/         # CSS files
 ├── index.html          # Main HTML file
 └── README.md           # You're here! :)
-🚀 How to Run Locally
-Clone this repo:
 
-bash
-git clone https://github.com/your-username/repo-name.git
-Open index.html in a browser, or use a live server (e.g., VS Code's Live Server extension).
+
 
 🔧 Debugging Issues
 Images/Audio not loading?
