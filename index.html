@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anjaly - Game Developer Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== GAME THEME VARIABLES ===== */
+        :root {
+            --primary: #121212;
+            --secondary: #00ff00;
+            --accent: #ff3366;
+            --text: #e0e0e0;
+            --dark: #1a1a1a;
+            --card: #222222;
+            
+            /* Game-inspired fonts */
+            --heading-font: 'Press Start 2P', cursive;
+            --main-font: 'Roboto Mono', monospace;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--main-font);
+            color: var(--text);
+            background: var(--primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ===== 8-BIT TYPOGRAPHY ===== */
+        h1, h2, h3 {
+            font-family: var(--heading-font);
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 0 5px var(--secondary);
+        }
+
+        h2 {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: var(--secondary);
+            margin: 0 auto 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+        }
+
+        h3 {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== PIXEL NAVBAR ===== */
+        nav {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            letter-spacing: 1px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            font-family: var(--heading-font);
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 5px var(--secondary);
+            
+        }
+
+        nav ul li a.active {
+            color: var(--secondary);
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid var(--secondary);
+            animation: blink 1s infinite step-end;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 7rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== ARCADE HOME SECTION ===== */
+        #home {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 1rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="10" height="10" x="0" y="0" fill="%2300ff00" fill-opacity="0.1"/></svg>');
+        }
+
+        .cursor-trail { 
+           position: fixed; 
+           pointer-events: none; 
+           animation: fade 1s forwards;
+}
+
+        /* Pixel animation */
+        @keyframes pixelGlow {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        .pixel-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 0;
+            animation: pixelGlow 2s infinite alternate;
+        }
+
+        /* Home content */
+        .home-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+       .welcome-text {
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        font-size: clamp(0.9rem, 3vw, 1.1rem); /* Better responsive sizing */
+        }
+
+        .typing-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--secondary);
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--secondary); }
+        }
+
+        /* Pixel button */
+        .pixel-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--secondary);
+            color: #000;
+            border: none;
+            font-family: var(--heading-font);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-top: 2rem;
+            cursor: pointer;
+            position: relative;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 0 rgba(0, 255, 0, 0.3);
+            touch-action: manipulation;
+        }
+
+        .pixel-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 3px 3px 0 rgba(0, 255, 0, 0.3);
+        }
+
+        /* ===== ABOUT SECTION ===== */
+        #about {
+            background: var(--dark);
+            position: relative;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .profile-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            background: var(--card);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            image-rendering: pixelated;
+        }
+
+        .profile-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 0, 0.1),
+                transparent
+            );
+            animation: scanline 6s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .about-text {
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .about-text {
+                text-align: left;
+            }
+        }
+
+        .skill-bars {
+            margin-top: 2rem;
+        }
+
+        .skill-bar {
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            position: relative;
+        }
+
+        .bar {
+          height: 100%;
+          background: var(--secondary);
+           position: relative;
+           width: 0;
+           transition: width 1.5s ease-out;
+}
+
+
+        @keyframes expandBar {
+            from { width: 0; }
+            to { width: var(--width); }
+        }
+
+        /* ===== PROJECTS SECTION ===== */
+        #projects {
+            background: var(--primary);
+            position: relative;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 600px) {
+            .projects-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        .project-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 0;
+            border: 4px solid var(--secondary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .project-tech {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 1rem;
+        }
+
+        /* Game console effect */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 255, 0, 0.1) 0%,
+                rgba(0, 255, 0, 0) 20%,
+                rgba(0, 255, 0, 0) 80%,
+                rgba(0, 255, 0, 0.1) 100%
+            );
+            pointer-events: none;
+        }
+
+        .game-area {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background: var(--dark);
+    padding: 3rem 1rem;
+  }
+
+  .game-board {
+    background: var(--card);
+    padding: 2rem;
+    border: 4px solid var(--secondary);
+    box-shadow: 0 0 15px rgba(0,255,0,0.2);
+    text-align: center;
+  }
+
+  .grid {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .hole {
+    width: 80px;
+    height: 80px;
+    background: #333;
+    position: relative;
+    cursor: pointer;
+    border: 2px solid var(--secondary);
+  }
+
+  .mole {
+    width: 60px;
+    height: 60px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+
+
+
+
+
+
+
+        /* ===== CONTACT SECTION ===== */
+        #contact {
+            background: var(--dark);
+            text-align: center;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (min-width: 600px) {
+            .contact-info {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        .contact-item {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            border: 4px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-item:hover {
+            transform: scale(1.05);
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .contact-item a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item:hover a {
+            color: var(--secondary);
+        }
+
+        /* Pixel art social icons */
+        .contact-item::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            bottom: 10px;
+            right: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+
+        .contact-item:hover::after {
+            opacity: 0.5;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #000;
+            color: var(--text);
+            text-align: center;
+            padding: 3rem 1rem;
+            border-top: 4px solid var(--secondary);
+        }
+
+        /* ===== RESPONSIVE ADJUSTMENTS ===== */
+        @media (max-width: 768px) {
+            section {
+                padding: 6rem 1.5rem;
+            }
+            
+            .profile-image {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            section {
+                padding: 5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            nav ul li a {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+        <ul>
+            <li><a href="#home" class="active">>Home</a></li>
+            <li><a href="#about">>About</a></li>
+            <li><a href="#projects">>Projects</a></li>
+            <li><a href="#contact">>Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- ===== ARCADE HOME SECTION ===== -->
+    <section id="home">
+        <!-- Pixel grid background -->
+        <div class="pixel-grid"></div>
+        
+        <div class="home-content">
+            <h1>Anjaly Davis</h1>
+            <p class="welcome-text">
+                <span class="typing-text">Hi , I'm a student pursuing bachelor's in computer science... </span> 
+            </p>
+            <p class="welcome-text">
+                Press START to begin your journey!
+            </p>
+            <a href="#about" class="pixel-btn">START</a>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <div class="profile-image-container">
+                <div class="profile-image">
+                    <img src="/assests/images/pic.png" alt="Anjaly" style="width:100%;height:100%;object-fit:cover;image-rendering:pixelated;">
+                </div>
+            </div>
+            
+            <div class="about-text">
+                <p>
+                    I'm Anjaly Davis, a passionate developer specializing in web technologies. 
+                    My work combines aesthetics with modern functionality.
+                </p>
+                <p>
+                    With experience in Html, JavaScript, Css and Frameworks, I create immersive experiences that 
+                    bridge the gap between nostalgia and innovation.
+                </p>
+                
+                <div class="skill-bars">
+                    <div class="skill-bar">
+                        <div class="skill-name">
+                            <span>UI UX Design</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="--width: 80%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-name">
+                            <span>Html/Css</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="--width: 95%;"></div>
+                        </div>
+                    </div>
+
+                     <div class="skill-bar">
+                        <div class="skill-name">
+                            <span>JavaScript</span>
+                            <span>89%</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="--width: 89%;"></div>
+                        </div>
+                    </div>
+                    
+                     <div class="skill-bar">
+                        <div class="skill-name">
+                            <span>React</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="--width: 70%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROJECTS SECTION ===== -->
+    <section id="projects">
+        <h2>My Projects</h2>
+        <div class="projects-grid">
+            
+            <!-- PROJECT 1 -->
+            <div class="project-card">
+                <h3>AI Portfolio Buider</h3>
+                <p>
+                    A Portfoilio builder integrated with AI and google analytics.
+                </p>
+                <span class="project-tech">Html• Css • AI</span>
+            </div>
+
+            <!-- PROJECT 2 -->
+            <div class="project-card">
+                <h3>QR Code App</h3>
+                <p>
+                 Generate, customize, and track QR codes in seconds—simple, smart, and scalable.  
+                </p>
+                <span class="project-tech">JavaScript • Html • Css</span>
+            </div>
+
+            <!-- PROJECT 3 -->
+            <div class="project-card">
+                <h3>Quiz Website</h3>
+                <p>
+                   Engage with fun, interactive quizzes—build, share, and analyze results instantly.
+                </p>
+                <span class="project-tech">Html • CSS • Javascript</span>
+            </div>
+
+        </div>
+    </section>
+
+        <section id="game">
+            <h2>Whack A Mole!</h2>
+            <div id="game-container" class="game-area">
+                <div class="game-board">
+                    <div class="score">Score: <span id="score">0</span></div>
+                    <div id="timer" style="color: var(--accent); margin-top: 1rem; font-family: var(--heading-font); font-size: 1rem;">⏱ 30s</div>
+                    <div class="grid">
+                        <div class="hole" id="hole0"></div>
+                        <div class="hole" id="hole1"></div>
+                        <div class="hole" id="hole2"></div>
+                    </div>
+                </div>
+                <button id="startBtn" class="pixel-btn">START GAME</button>
+                <button id="restartBtn" class="pixel-btn" style="display: none; margin-top: 1.5rem;">RESTART</button>
+
+            </div>
+        </section>
+
+
+
+    <!-- ===== CONTACT SECTION ===== -->
+    <section id="contact">
+        <h2>Get In Touch</h2>
+        <div class="contact-info">
+            
+            <!-- EMAIL -->
+            <div class="contact-item" style="--icon: url('email-icon.png')">
+                <h3>Email</h3>
+                <p><a href="mailto:anjaly@example.com">anjalydavis.r@gmail.com</a></p>
+            </div>
+
+            <!-- LINKEDIN -->
+            <div class="contact-item">
+                <h3>LinkedIn</h3>
+                <p><a href="https://www.linkedin.com/in/anjaly-davis-097348365/" target="_blank">linkedin.com/in/anjaly</a></p>
+            </div>
+
+            <!-- GITHUB -->
+            <div class="contact-item">
+                <h3>GitHub</h3>
+                <p><a href="https://github.com/anjalydavis" target="_blank">github.com/anjaly</a></p>
+            </div>
+
+        </div>
+    </section>
+
+   
+
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <p>&copy; <span id="currentYear">2024</span> Anjaly. All rights reserved.</p>
+        <p style="margin-top: 1rem; font-size: 0.8rem;">Game Over? Press F5 to continue!</p>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+
+        // Game logic for Whack-a-Mole
+          let score = 0;
+  const scoreDisplay = document.getElementById('score');
+  const timerDisplay = document.getElementById('timer');
+ const startBtn = document.getElementById('startBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const holes = Array.from(document.querySelectorAll('.hole'));
+
+  let timeLeft = 30;
+  let gameInterval, countdown;
+  let gameActive = false;
+
+  const bonkSound = new Audio('/assests/audio/bonk.mp3');
+  bonkSound.volume = 0.4;
+
+  function spawnMole() {
+    if (!gameActive) return;
+    holes.forEach(h => h.innerHTML = '');
+    const randomHole = holes[Math.floor(Math.random() * holes.length)];
+    const mole = document.createElement('div');
+    mole.classList.add('mole');
+    randomHole.appendChild(mole);
+
+    mole.addEventListener('click', () => {
+       if (!gameActive) return;
+      score++;
+      scoreDisplay.textContent = score;
+      mole.remove();
+      bonkSound.currentTime = 0;
+      bonkSound.play();
+    });
+
+    setTimeout(() => {
+      mole.remove();
+    }, 800);
+  }
+
+  function startGame() {
+  if (gameActive) return; // Prevent multiple starts
+  
+  gameActive = true;
+  score = 0;
+  scoreDisplay.textContent = score;
+  timeLeft = 30;
+  timerDisplay.textContent = `⏱ ${timeLeft}s`;
+  restartBtn.style.display = 'none';
+  startBtn.style.display = 'none'; // Hide start button during game
+
+  gameInterval = setInterval(spawnMole, 1000);
+  countdown = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = `⏱ ${timeLeft}s`;
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+
+
+  function endGame() {
+    clearInterval(gameInterval);
+    clearInterval(countdown);
+    holes.forEach(h => h.innerHTML = '');
+    timerDisplay.textContent = '⏱ 0s';
+    alert(`Game Over! 🎉 Your score: ${score}`);
+    const highScore = localStorage.getItem('highScore') || 0;
+    if (score > highScore) {
+      localStorage.setItem('highScore', score);
+      alert('New High Score! 🏆');
+    }
+    restartBtn.style.display = 'inline-block';
+     startBtn.style.display = 'none'; 
+  }
+
+  startBtn.addEventListener('click', startGame);
+  restartBtn.addEventListener('click', startGame);
+
+  
+
+
+
+
+
+         // === SKILL BAR ANIMATION ===
+const aboutSection = document.querySelector('#about');
+const skillBars = document.querySelectorAll('.bar');
+
+function animateSkillBars() {
+  skillBars.forEach(bar => {
+    bar.style.width = '0'; // Reset to 0 before animating
+    const width = bar.style.getPropertyValue('--width') || '0%';
+    setTimeout(() => {
+      bar.style.width = width;
+    }, 100);
+  });
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateSkillBars();
+    } else {
+      // Optional: Reset bars when leaving section
+      skillBars.forEach(bar => {
+        bar.style.width = '0';
+      });
+    }
+  });
+}, { 
+  threshold: 0.5,
+  rootMargin: '0px 0px -100px 0px' // Adjust this to trigger animation earlier/later
+});
+
+observer.observe(aboutSection);
+
+// Also trigger on nav link clicks
+document.querySelectorAll('nav a[href="#about"]').forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(animateSkillBars, 500); // Small delay to allow scroll to complete
+  });
+});
+
+// === CURSOR TRAIL EFFECT ===
+  document.addEventListener('mousemove', (e) => {
+  const trail = document.createElement('div');
+  trail.className = 'cursor-trail';
+  trail.style.left = `${e.clientX}px`;
+  trail.style.top = `${e.clientY}px`;
+  document.body.appendChild(trail);
+});
+
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('nav ul li a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      
+      // More accurate section detection
+      if (window.scrollY >= sectionTop - 100) {  // Adjust offset (e.g., 100px) as needed
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href').includes(current)) {
+        link.classList.add('active');
+      }
+    });
+  });
+
+  // Set current year in footer
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+  // Add sound effect to buttons
+  const clickSound = new Audio('/assests/audio/click2.mp3');
+  clickSound.volume = 0.5; // Optional: adjust volume
+
+  // Unlock audio on first user interaction
+  let audioUnlocked = false;
+  function unlockAudio() {
+    if (!audioUnlocked) {
+      clickSound.play().catch(() => {}); // Try to unlock
+      audioUnlocked = true;
+    }
+  }
+  document.addEventListener('click', unlockAudio, { once: true });
+
+  // Play click sound on interactive elements
+  const clickableElements = document.querySelectorAll(
+    '.pixel-btn,.contact-item, nav ul li a'
+  );
+
+  clickableElements.forEach(el => {
+    el.addEventListener('click', () => {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(e => {
+        console.log('Audio play blocked:', e.message);
+      });
+    });
+  });
+
+  // Keyboard controls for fun (Space to scroll down)
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();  // Prevent default spacebar behavior (optional)
+      window.scrollBy(0, window.innerHeight);
+    }
+  });
+</script>
+</body>
+</html>    
