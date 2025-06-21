@@ -197,22 +197,41 @@
         }
 
         .typing-text {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 3px solid var(--secondary);
-            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
-        }
+  display: inline;
+  white-space: normal;
+  word-wrap: break-word;
+  font-family: var(--main-font);
+  position: relative;
+}
+
+.typing-text::after {
+  content: '|';
+  position: absolute;
+  animation: blink-caret 0.75s step-end infinite;
+}
 
         @keyframes typing {
             from { width: 0 }
-            to { width: 100% }
+            to { width: 40ch }
         }
 
         @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--secondary); }
-        }
+  from, to { opacity: 0 }
+  50% { opacity: 1 }
+} 
+        @media (max-width: 600px) {
+  .typing-text {
+    animation: typingMobile 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+  }
+
+  @keyframes typingMobile {
+    from { width: 0 }
+    to { width: 30ch }
+  }
+}
+
+
+
 
         /* Pixel button */
         .pixel-btn {
@@ -237,6 +256,9 @@
             transform: translate(2px, 2px);
             box-shadow: 3px 3px 0 rgba(0, 255, 0, 0.3);
         }
+
+      
+
 
         /* ===== ABOUT SECTION ===== */
         #about {
@@ -595,9 +617,24 @@
                 padding: 0.5rem;
             }
         }
+    
+        #sprite-container {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+}
+
+
+
     </style>
 </head>
 <body>
+
+
+
+
     <!-- ===== NAVIGATION ===== -->
     <nav>
         <ul>
@@ -616,13 +653,29 @@
         <div class="home-content">
             <h1>Anjaly Davis</h1>
             <p class="welcome-text">
-                <span class="typing-text">Hi , I'm a student pursuing bachelor's in computer science... </span> 
+                <span class="typing-text" id="typing-text"></span> 
             </p>
             <p class="welcome-text">
                 Press START to begin your journey!
             </p>
             <a href="#about" class="pixel-btn">START</a>
+            <div id="sprite-container">
+                <canvas id="spriteCanvas" style="
+                    width: 100vw;
+                    height: auto;
+                    display: block;
+                    max-height: 128px;
+                    image-rendering: pixelated;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    z-index: 10;
+                    pointer-events: none;
+                "></canvas>
+            </div>
+
         </div>
+        
     </section>
 
     <!-- ===== ABOUT SECTION ===== -->
@@ -783,6 +836,10 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script>
+
+
+
+        
 
 // Whack A Mole Game Logic 
 // Whack-a-Mole Game Logic
@@ -984,6 +1041,7 @@
 
 
 
+
          // === SKILL BAR ANIMATION ===
 const aboutSection = document.querySelector('#about');
 const skillBars = document.querySelectorAll('.bar');
@@ -1081,6 +1139,105 @@ document.querySelectorAll('nav a[href="#about"]').forEach(link => {
       window.scrollBy(0, window.innerHeight);
     }
   });
+
+
+
+
+
+    // Sprite Animation
+     const spriteSheet = new Image();
+  spriteSheet.src = '/assests/images/girl.png'; // Replace with correct path
+
+  const canvas = document.getElementById('spriteCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const frameWidth = 64; // adjust based on actual sprite frame size
+  const frameHeight = 64;
+  const totalFrames = 9; // adjust based on the number of walking frames
+  const startY = 2; 
+  const walkRow = 2;
+  // Y row of the walking animation (usually 0 for down-facing)
+  let currentFrame = 0;
+  let posX = 0;
+  let direction = 1;
+
+
+   canvas.width = window.innerWidth;
+  canvas.height = frameHeight;
+
+
+
+function drawFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+
+    if (direction === -1) {
+      ctx.translate(posX + frameWidth, 0);
+      ctx.scale(-1, 1); // flip horizontally
+      ctx.drawImage(
+        spriteSheet,
+        currentFrame * frameWidth, walkRow * frameHeight,
+        frameWidth, frameHeight,
+        0, 0,
+        frameWidth, frameHeight
+      );
+    } else {
+      ctx.drawImage(
+        spriteSheet,
+        currentFrame * frameWidth, walkRow * frameHeight,
+        frameWidth, frameHeight,
+        posX, 0,
+        frameWidth, frameHeight
+      );
+    }
+
+    ctx.restore();
+
+    currentFrame = (currentFrame + 1) % totalFrames;
+
+    posX += direction * 4; // speed
+
+    // Reverse direction on edges
+    if (posX > canvas.width - frameWidth || posX < 0) {
+      direction *= -1;
+    }
+  }
+
+  spriteSheet.onload = () => {
+    setInterval(drawFrame, 120); // Adjust speed
+  };
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+  });
+   
+  function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = frameHeight; // or auto-scale height if needed
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+//typing text
+const typingTarget = document.getElementById('typing-text');
+const textToType = "Hi, I'm a student pursuing bachelor's in computer science... ";
+let charIndex = 0;
+
+function typeText() {
+  if (charIndex < textToType.length) {
+    typingTarget.textContent += textToType.charAt(charIndex);
+    charIndex++;
+    setTimeout(typeText, 50); // typing speed
+  } else {
+    typingTarget.classList.add('blink-cursor'); // after typing ends
+  }
+}
+
+typeText();
+
+
 </script>
 </body>
 </html>
